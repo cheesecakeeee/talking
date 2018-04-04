@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+
+    <title>注册 - 啾咪( ^o< )</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/jumbotron.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="/js/ie-emulation-modes-warning.js"></script>
+
+    <style>
+      #failure{
+        margin-top: 10px;
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+
+
+    <% include header.ejs%>
+    
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row jumbotron">
+        <h2>来不及解释了快注册</h2>
+        <form>
+          <div class="form-group">
+            <label for="username">用户名</label>
+            <input type="text" class="form-control" id="username" placeholder="请输入用户名">
+          </div>
+          <div class="form-group">
+            <label for="password">密码</label>
+            <input type="password" class="form-control" id="password" placeholder="请输入密码">
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox">自愿接受一切不平等条约！！！
+            </label>
+          </div>
+          <button type="button" id="zhuce" class="btn btn-success">注册</button>
+        </form>
+
+      <div class="alert alert-danger" role="alert" id="failure">用户名被占用，请更换</div>
+        
+      </div>
+      
+    </div> <!-- /container -->
+<hr>
+    
+<footer>
+  <p>&copy; 2016 Company, Inc.</p>
+</footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/js/jquery.min.js"><\/script>')</script>
+    <script src="/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    <script>
+      // 得到焦点时隐藏错误提示框
+      $("input").focus(function(){
+        $("#failure").fadeOut();
+      })
+
+      $("#zhuce").click(function(){
+        $.post("/doregist",{
+          "username":$("#username").val(),
+          "password":$("#password").val()
+        },function(result){
+          if(result == "1"){
+            // 注册成功
+            alert("注册成功，自动跳转到首页");
+            window.location="/";
+            
+          }else if(result == "-1"){
+            // 用户名被占用
+            $("#failure").fadeIn().html("用户名被占用了~换一个吧");
+          }else if(result == "-3"){
+            // 服务器错误
+            $("#failure").fadeIn().html("服务器开小差了~~");
+          }
+        })
+      })
+    </script>
+  </body>
+</html>
