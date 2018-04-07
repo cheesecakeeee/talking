@@ -25,7 +25,7 @@ app.get("/login",router.showLogin);
 app.post("/dologin",router.doLogin);
 app.get("/setavatar",router.showSetavatar);
 app.post("/dosetavatar",router.doSetavatar);
+app.get("/crop",router.showCrop);
+app.get("/docrop",router.doCrop);
 
-
-
-app.listen(8888,()=>{console.log("server running at http://127.0.0.1:8888")});
+app.listen(8888,function(){console.log("server running at http://127.0.0.1:8888")});

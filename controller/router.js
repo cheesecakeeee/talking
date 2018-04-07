@@ -2,6 +2,8 @@ var formidable = require('formidable');
 var db1 = require("../models/db1.js");
 var md5 = require("../models/md5.js");
 var path = require("path");
+var fs = require("fs");
+var gm = require("gm");
 
 
 // 首页
@@ -145,14 +147,58 @@ exports.showSetavatar = function(req,res,next){
 
 // 上传文件。裁切图像
 exports.doSetavatar = function(req,res,next){
+    if(req.session.login != "1"){
+        res.send("非法闯入，必须要登录才可以头像");
+        return;
+    }
     var form = new formidable.IncomingForm();
     form.uploadDir = path.normalize(__dirname + "/../avatar" );
     console.log(form.uploadDir)
     form.parse(req, function(err, fields, files) {
-
-        // var extname = path.extname(files.avatar);
-        console.log(files)
-        console.log(fields)
-        
+        //获取后缀
+        var extname = path.extname(files.avatar.name);
+        //console.log(files);
+        var oldpath = files.avatar.path;
+        var newpath = path.normalize(__dirname + "/../avatar/"+req.session.username+extname );;
+        fs.rename(oldpath , newpath , function (err) {
+            if(err){
+                res.send("失败");
+                return;
+            }
+            //res.send("头像上传成功");
+            //重定向跳转到裁切图像页面,切的业务
+            //裁切的页面来自缓存，用session暂存一下头像等下读取上传裁切头像
+            req.session.avatar = req.session.username + extname;
+            res.redirect("/crop");
+        })
     });
 }
+
+//显示裁切
+exports.showCrop = function (req,res,next) {
+    res.render("crop",{
+        avatar: req.session.avatar
+    })
+}
+
+//执行裁切
+exports.doCrop = function(req,res,next){
+    var filename = req.session.avatar;
+    var w = req.query.w;
+    var h = req.query.h;
+    var x = req.query.x;
+    var y = req.query.y;
+    gm("./avatar/"+filename)
+        .crop(w,h,x,y)
+        .resize(100, 100,"!")
+        .write("./avatar/"+filename,function(err){
+            if(err){
+                res.send("-1")
+                return;
+            }else{
+                res.send("1")
+            }
+        })
+}
+
+//裁切成功后存入数据库
