@@ -18,14 +18,14 @@ app.use("/avatar",express.static("./avatar"));
 
 
 // 路由表
-app.get("/",router.showIndex);
-app.get("/regist",router.showRegist);
-app.post("/doregist",router.doRegist);
-app.get("/login",router.showLogin);
-app.post("/dologin",router.doLogin);
-app.get("/setavatar",router.showSetavatar);
-app.post("/dosetavatar",router.doSetavatar);
-app.get("/crop",router.showCrop);
-app.get("/docrop",router.doCrop);
+app.get("/",router.showIndex);          //显示首页
+app.get("/regist",router.showRegist);   //显示注册页面
+app.post("/doregist",router.doRegist);  //执行注册
+app.get("/login",router.showLogin);     //显示登录页面
+app.post("/dologin",router.doLogin);    //执行登录
+app.get("/setavatar",router.showSetavatar);     //显示上传头像
+app.post("/dosetavatar",router.doSetavatar);    //执行上传
+app.get("/crop",router.showCrop);       //显示裁切页面
+app.get("/docrop",router.doCrop);       //执行裁切
 
 app.listen(8888,function(){console.log("server running at http://127.0.0.1:8888")});
