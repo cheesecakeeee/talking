@@ -210,5 +210,34 @@ exports.doCrop = function(req,res,next){
                 })
             }   
         })
-    
+
+}
+
+exports.doPost = function(req,res,next){
+    if(req.session.login != "1"){
+        res.send("非法闯入，必须要登录！！");
+        return;
+    }
+    //得到用户名
+    var username = req.session.username;
+    // 得到用户提交表单
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+        //获取提交的内容
+        var content = fields.content;
+        //插入数据库
+        db1.insertOne("post",{
+            "username":username,
+            "time":new Date(),
+            "content":content
+        },function(err,result){
+            if(err){
+                res.send("-3"); //服务器错误
+                return;
+            }
+            res.send("1"); //发表成功
+        })
+
+
+    });
 }
