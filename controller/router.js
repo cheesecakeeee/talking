@@ -153,7 +153,6 @@ exports.doSetavatar = function(req,res,next){
     }
     var form = new formidable.IncomingForm();
     form.uploadDir = path.normalize(__dirname + "/../avatar" );
-    console.log(form.uploadDir)
     form.parse(req, function(err, fields, files) {
         //获取后缀
         var extname = path.extname(files.avatar.name);
@@ -183,6 +182,10 @@ exports.showCrop = function (req,res,next) {
 
 //执行裁切
 exports.doCrop = function(req,res,next){
+    if(req.session.login != "1"){
+        res.send("非法闯入，必须要登录才可以裁切头像");
+        return;
+    }
     var filename = req.session.avatar;
     var w = req.query.w;
     var h = req.query.h;
@@ -196,9 +199,13 @@ exports.doCrop = function(req,res,next){
                 res.send("-1")
                 return;
             }else{
-                res.send("1")
-            }
+                //裁切成功后更新数据库
+                db1.updateMany("user",{"username":req.session.username},{
+                    $set:{"avatar":req.session.avatar}
+                },function(err,result){
+                    res.send("1")
+                })
+            }   
         })
+    
 }
-
-//裁切成功后存入数据库

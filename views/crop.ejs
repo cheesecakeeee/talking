@@ -80,8 +80,8 @@
   $("#btn").click(function(){
     var w = parseInt($(".jcrop-holder>div:first").css('width'));
     var h = parseInt($(".jcrop-holder>div:first").css('height'));
-    var x = parseInt($(".jcrop-holder>div:first").css('top'));
-    var y = parseInt($(".jcrop-holder>div:first").css('left'));
+    var x = parseInt($(".jcrop-holder>div:first").css('left'));
+    var y = parseInt($(".jcrop-holder>div:first").css('top'));
     
     $.get("/docrop",{
       "w":w,
@@ -89,7 +89,10 @@
       "x":x,
       "y":y
     },function(result){
-      alert(result)
+      if(result == "1"){
+        alert("裁切成功");
+        window.location ="/";
+      }
     })
   })
 </script>
