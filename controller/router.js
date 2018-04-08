@@ -133,7 +133,7 @@ exports.doLogin = function(req,res,next){
 // 上传头像 必须保证已经登录
 exports.showSetavatar = function(req,res,next){
     if(req.session.login != "1"){
-        res.send("非法闯入，必须要登录才可以设置头像");
+        res.send("非法闯入，必须要登录！！");
         return
     }
     res.render("setavatar",{
@@ -147,7 +147,7 @@ exports.showSetavatar = function(req,res,next){
 // 上传文件。裁切图像
 exports.doSetavatar = function(req,res,next){
     if(req.session.login != "1"){
-        res.send("非法闯入，必须要登录才可以头像");
+        res.send("非法闯入，必须要登录！！");
         return;
     }
     var form = new formidable.IncomingForm();
@@ -174,6 +174,10 @@ exports.doSetavatar = function(req,res,next){
 
 //显示裁切
 exports.showCrop = function (req,res,next) {
+    if(req.session.login != "1"){
+        res.send("非法闯入，必须要登录！！");
+        return;
+    }
     res.render("crop",{
         avatar: req.session.avatar
     })
@@ -182,7 +186,7 @@ exports.showCrop = function (req,res,next) {
 //执行裁切
 exports.doCrop = function(req,res,next){
     if(req.session.login != "1"){
-        res.send("非法闯入，必须要登录才可以裁切头像");
+        res.send("非法闯入，必须要登录！！");
         return;
     }
     var filename = req.session.avatar;
