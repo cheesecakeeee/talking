@@ -14,6 +14,27 @@ function __connectMongoDB(callback){
     })
 }
 
+init();
+// 建立索引
+function init() {
+    __connectMongoDB(function(err,db){
+        if(err){
+            console.log(err);
+            return;
+        }
+        db.collection('user').createIndex(
+            { "name": 1 },
+              null,
+              function(err, results) {
+                console.log("索引建立成功");
+            }
+        );
+    })
+   
+};
+
+
+
 // 传入回调函数，再连接成功后进行一系列操作
 // __connectMongoDB(function(err,db){
 

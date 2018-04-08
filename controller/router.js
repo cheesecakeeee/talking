@@ -26,7 +26,7 @@ exports.showIndex = function(req,res,next){
         res.render("index",{
             "login":login,
             "username":username,
-            "active":"首页",
+            "active":"全部说说",
             "avatar":avatar
         })
     })

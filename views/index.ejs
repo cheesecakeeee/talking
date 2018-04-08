@@ -31,14 +31,32 @@
     <% include header.ejs%>
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
-      <div class="container">
-        <h1>
-          <a href="/setavatar"><img src="./avatar/<%= avatar %>" alt=""></a>
-          Hello, world!
-        </h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
-      </div>
+      <% if(login !=1){ %>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <h1>
+                欢迎光临
+              </h1>
+              <p>啾咪社区,欢迎加入我们哦~~~~~~~~~~~~</p>
+              <p><a class="btn btn-primary btn-lg" href="/regist" role="button">注册 &raquo;</a></p>
+            </div>
+            <div class="col-lg-6">
+              <p>已有账号</p>
+              <p><a class="btn btn-primary btn-lg" href="/regist" role="button">注册 &raquo;</a></p>
+            </div>
+          </div>
+        </div> 
+      <% }else{ %>
+        <div class="container">
+          <h1>
+            <a href="/setavatar"><img src="./avatar/<%= avatar %>" alt=""></a>
+            Hello, world!
+          </h1>
+          <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+          <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+        </div>
+      <% } %>
     </div>
 
     <div class="container">
