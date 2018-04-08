@@ -8,29 +8,28 @@ var gm = require("gm");
 
 // 首页
 exports.showIndex = function(req,res,next){
-    // 如果已登录查找数据库是否有新头像
+    // 判断是否登录，决定后台渲染模板传递的数据状态
     if(req.session.login == "1"){
-        db1.find("user",{username:req.session.username},function(err,result){
-            var avatar = result[0].avatar || "ini.png";
-            res.render("index",{
-                "login": true,
-                "username": req.session.username,
-                "active":"首页",
-                "avatar": avatar//登录成功后从数据库读头像地址，session标记是否登录
-            });
-        })
+        var username = req.session.username;
+        var login = true;
+
+    }else{
+        var username = "";
+        var login = false;
     }
-    else{
+    db1.find("user",{username: username},function(err,result){
+        if(result.length == 0){ //查找数据库是否有该用户，如果有该用户获取其数据库的头像，若没有就自动渲染初始图片
+            var avatar = "ini.png"
+        }else{
+            var avatar = result[0].avatar;  //用户未更改头像读取的是注册时默认写入的头像地址
+        }
         res.render("index",{
-            // "login": req.session.login == "1" ? true : false,
-            // "username": req.session.login == "1" ? req.session.username : "",
-            "login":false,
-            "username": "",
+            "login":login,
+            "username":username,
             "active":"首页",
-            "avatar":"ini.png" 
-        });
-    }
-    
+            "avatar":avatar
+        })
+    })
 }
 // 注册页
 exports.showRegist = function(req,res,next){
