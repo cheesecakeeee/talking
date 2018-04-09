@@ -17,18 +17,24 @@ exports.showIndex = function(req,res,next){
         var username = "";
         var login = false;
     }
+    // 检索数据库查头像
     db1.find("user",{username: username},function(err,result){
         if(result.length == 0){ //查找数据库是否有该用户，如果有该用户获取其数据库的头像，若没有就自动渲染初始图片
             var avatar = "ini.png"
         }else{
             var avatar = result[0].avatar;  //用户未更改头像读取的是注册时默认写入的头像地址
         }
-        res.render("index",{
-            "login":login,
-            "username":username,
-            "active":"全部说说",
-            "avatar":avatar
+        // 检索数据库查说说
+        db1.find("post",{},{"sort":{"time":-1}},function(err,result2){
+            res.render("index",{
+                "login":login,
+                "username":username,
+                "active":"全部说说",
+                "avatar":avatar,
+                "shuoshuo":result2
+            })
         })
+        
     })
 }
 // 注册页
