@@ -20,10 +20,23 @@
 
     <!-- Custom styles for this template -->
     <link href="/css/jumbotron.css" rel="stylesheet">
-
+    <style>
+      .avatar{
+        border-radius: 50%;
+      }
+    </style>
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="/js/ie-emulation-modes-warning.js"></script>
+    <!-- Bootstrap core JavaScript
+   ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/js/jquery.min.js"><\/script>')</script>
+    <script src="/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/js/underscore-noflect.js"></script>
   </head>
 
   <body>
@@ -77,6 +90,29 @@
 
     <div class="container">
       <!-- Example row of columns -->
+      <!--分页导航ajax-->
+      <nav>
+        <ul class="pagination">
+
+        </ul>
+      </nav>
+      <script>
+        $.get("/getshuoshuoamount",function(result){
+          var amount = parseInt(result);
+          pageamount = Math.ceil(amount/9);
+          for(var i=0;i<pageamount;i++){
+            $(".pagination").append("<li><a href='javascript:void(0)'>"+(i+1)+"</a></li>")
+          }
+          $(".pagination li:first").addClass("active");
+          //绑定点击事件点击页码得到相应的页面列表
+          $(".pagination li").click(function(){
+            var page = $(this).index();
+            getPage(page);
+            $(this).addClass("active").siblings().removeClass("active");
+          })
+        })
+      </script>
+      <!--所有说说列表-->
       <div class="row" id="quanbushuoshuo">
         
       </div>
@@ -90,54 +126,51 @@
     <!-- 前端模板渲染 -->
     <script type="text/template" id="muban">
       <div class="col-md-4">
-        <h2><img src="/avatar/{{=avatar}}" alt="" style="width:40px">{{=username}}说：</h2>  <!-- 头像用到ajax嵌套 -->
+        <h2><img src="/avatar/{{=avatar}}" alt="" style="width:40px" class="avatar">{{=username}}说：</h2>  <!-- 头像用到ajax嵌套 -->
         <p>{{=content}}</p>
         <p>{{=time}}</p>
         <p><a class="btn btn-default" href="#" role="button">查看更多 &raquo;</a></p>
       </div>
     </script> 
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/js/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="/js/jquery.min.js"><\/script>')</script>
-    <script src="/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="/js/ie10-viewport-bug-workaround.js"></script>
-    <script src="/js/underscore-noflect.js"></script>
+
     <script>
       // 得到模板
       var compiled = _.template($("#muban").html());
       // ajax读取文章列表,分页
-      $.ajax({
-        "url":"/getallshuoshuo?page=0",
-        "type":"get",
-        "success":function(result){
-          // console.log(result);
-          // console.log(Array.isArray(result)); //true result为数组
-          // ajax请求嵌套，默认异步,迭代内部要ajax请求要同步 ,但是同步会阻塞因此用迭代器
-          iterator(0);
-          function iterator(i){
-            if(i== result.length){ 
-              return;
+      getPage(0)
+      function getPage(page){
+        //清空每次请求的说说列表确保每次都获取新的列表
+        $("#quanbushuoshuo").html("");
+        $.ajax({
+          "url":"/getallshuoshuo?page="+page,
+          "type":"get",
+          "success":function(result){
+            // console.log(result);
+            // console.log(Array.isArray(result)); //true result为数组
+            // ajax请求嵌套，默认异步,for循环内部要ajax请求要同步 ,但是同步会阻塞因此用迭代器
+            iterator(0);
+            function iterator(i){
+              if(i== result.length){
+                return;
+              }
+              $.ajax({
+                "url": "/getuserinfo?username="+result[i].username,
+                "type": "get",
+                "success":function(result2){
+                  // ajax请求成功获取头像追加到字典中
+                  result[i].avatar = result2.avatar;
+                  // console.log(result[i]);
+                  var htmlstring = compiled(result[i]);
+                  $("#quanbushuoshuo").append($(htmlstring));
+                  iterator(i+1);
+                }
+              });
             }
-            $.ajax({ 
-              "url": "/getuserinfo?username="+result[i].username, 
-              "type": "get", 
-              "success":function(result2){ 
-                // ajax请求成功获取头像追加到字典中
-                result[i].avatar = result2.avatar;
-                // console.log(result[i]);
-                var htmlstring = compiled(result[i]);
-                $("#quanbushuoshuo").append($(htmlstring));
-                iterator(i+1);
-              } 
-            });
+
           }
-            
-        }
-      })
+        })
+      }
 
 
       // 得到焦点时隐藏错误提示框

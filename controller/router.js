@@ -253,7 +253,7 @@ exports.doPost = function(req,res,next){
 exports.getAllShuoshuo = function(req,res,next){
     // 分页,获取页码
     var page = req.query.page;
-    db1.find("post",{},{"sort":{"time":-1},"pageAmount":10,"page":page},function(err,result){
+    db1.find("post",{},{"sort":{"time":-1},"pageAmount":9,"page":page},function(err,result){
         res.json(result);
     })
 }
@@ -269,5 +269,12 @@ exports.getUserInfo = function(req,res,next){
             "_id":result[0]._id
         }
         res.json(obj)
+    })
+}
+
+//获取说说数量ajax服务
+exports.getShuoshuoAmount = function(req,res,next){
+    db1.getAllCount("post", function (count) {
+        res.send(count.toString())
     })
 }
