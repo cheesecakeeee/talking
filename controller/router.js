@@ -30,8 +30,8 @@ exports.showIndex = function(req,res,next){
                 "login":login,
                 "username":username,
                 "active":"全部说说",
-                "avatar":avatar,
-                "shuoshuo":result2
+                "avatar":avatar    //登陆人的头像
+                // 列出所有说说交给前台渲染，因此不传递result->shuoshuo
             })
         })
         
@@ -246,4 +246,28 @@ exports.doPost = function(req,res,next){
 
 
     });
+}
+
+// 列出所有说说
+
+exports.getAllShuoshuo = function(req,res,next){
+    // 分页,获取页码
+    var page = req.query.page;
+    db1.find("post",{},{"sort":{"time":-1},"pageAmount":10,"page":page},function(err,result){
+        res.json(result);
+    })
+}
+// 说说列表缺少头像，根据用户名获取用户某些部分的个人信息传回前台
+// 获取某个用户信息
+exports.getUserInfo = function(req,res,next){
+    var username = req.query.username;
+    db1.find("user",{"username":username},function(err,result){
+        // res.json({"r":result});
+        var obj = {
+            "username":result[0].username,
+            "avatar":result[0].avatar,
+            "_id":result[0]._id
+        }
+        res.json(obj)
+    })
 }

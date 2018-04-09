@@ -28,6 +28,7 @@ app.post("/dosetavatar",router.doSetavatar);    //执行上传
 app.get("/crop",router.showCrop);       //显示裁切页面
 app.get("/docrop",router.doCrop);       //执行裁切
 app.post("/post",router.doPost);       //发表说说
-
+app.get("/getallshuoshuo",router.getAllShuoshuo);   //列出所有说说
+app.get("/getuserinfo",router.getUserInfo);     //获取某用户信息
 
 app.listen(8888,function(){console.log("server running at http://127.0.0.1:8888")});

@@ -77,19 +77,8 @@
 
     <div class="container">
       <!-- Example row of columns -->
-      <div class="row">
-        <%for(var i=0;i<shuoshuo.length;i++){%>
-        <div class="col-md-4">
-          <h2><img src="./avatar/<%=shuoshuo[i].username%>.jpg" alt="" style="width:40px"><%=shuoshuo[i].username%>说：</h2>
-          <p><%=shuoshuo[i].content%></p>
-          <p><a class="btn btn-default" href="#" role="button">查看更多 &raquo;</a></p>
-        </div>
-        <%}%>
-        <!-- <div class="col-md-4">
-            <h2></h2>
-            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div> -->
+      <div class="row" id="quanbushuoshuo">
+        
       </div>
 
       <hr>
@@ -98,7 +87,15 @@
         <p>&copy; 2016 Company, Inc.</p>
       </footer>
     </div> <!-- /container -->
-
+    <!-- 前端模板渲染 -->
+    <script type="text/template" id="muban">
+      <div class="col-md-4">
+        <h2><img src="/avatar/{{=avatar}}" alt="" style="width:40px">{{=username}}说：</h2>  <!-- 头像用到ajax嵌套 -->
+        <p>{{=content}}</p>
+        <p>{{=time}}</p>
+        <p><a class="btn btn-default" href="#" role="button">查看更多 &raquo;</a></p>
+      </div>
+    </script> 
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -108,12 +105,46 @@
     <script src="/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/js/underscore-noflect.js"></script>
     <script>
+      // 得到模板
+      var compiled = _.template($("#muban").html());
+      // ajax读取文章列表,分页
+      $.ajax({
+        "url":"/getallshuoshuo?page=0",
+        "type":"get",
+        "success":function(result){
+          // console.log(result);
+          // console.log(Array.isArray(result)); //true result为数组
+          // ajax请求嵌套，默认异步,迭代内部要ajax请求要同步 ,但是同步会阻塞因此用迭代器
+          iterator(0);
+          function iterator(i){
+            if(i== result.length){ 
+              return;
+            }
+            $.ajax({ 
+              "url": "/getuserinfo?username="+result[i].username, 
+              "type": "get", 
+              "success":function(result2){ 
+                // ajax请求成功获取头像追加到字典中
+                result[i].avatar = result2.avatar;
+                // console.log(result[i]);
+                var htmlstring = compiled(result[i]);
+                $("#quanbushuoshuo").append($(htmlstring));
+                iterator(i+1);
+              } 
+            });
+          }
+            
+        }
+      })
+
+
       // 得到焦点时隐藏错误提示框
       $("input").focus(function(){
         $("#failure").fadeOut();
       })
-
+      // 点击登录
       $("#denglv").click(function(){
         $.post("/dologin",{
           "username":$("#username").val(),
@@ -136,7 +167,7 @@
         })
       })
 
-//      点击发表
+      //点击发表
       $("#publish").click(function(){
         $.post("/post",{
           "content":$("#content").val()
