@@ -79,7 +79,7 @@
             </div>
             <div class="col-lg-6 col-lg-offset-1">
               <p><%= username%></p>
-              <textarea name="content" id="content" cols="100" rows="4"></textarea>
+              <textarea name="content" id="content" cols="100" rows="4"  style="resize:none" ></textarea>
               <button type="button" id="publish" class="btn btn-primary">发表</button>
             </div>
           </div>
@@ -87,7 +87,9 @@
         </div>
       <% } %>
     </div>
-
+    <%
+    if(login){
+    %>
     <div class="container">
       <!-- Example row of columns -->
       <!--分页导航ajax-->
@@ -96,6 +98,7 @@
 
         </ul>
       </nav>
+      <!-- ajax访问读取总数，计算得到页码 -->
       <script>
         $.get("/getshuoshuoamount",function(result){
           var amount = parseInt(result);
@@ -113,10 +116,13 @@
         })
       </script>
       <!--所有说说列表-->
-      <div class="row" id="quanbushuoshuo">
-        
-      </div>
 
+      <div class="row" id="quanbushuoshuo">
+      
+      </div>
+      <%
+      }
+      %> 
       <hr>
 
       <footer>
@@ -129,7 +135,7 @@
         <h2><img src="/avatar/{{=avatar}}" alt="" style="width:40px" class="avatar">{{=username}}说：</h2>  <!-- 头像用到ajax嵌套 -->
         <p>{{=content}}</p>
         <p>{{=time}}</p>
-        <p><a class="btn btn-default" href="#" role="button">查看更多 &raquo;</a></p>
+        <p><a class="btn btn-default" href="javascript:void(0)" role="button">查看更多 &raquo;</a></p>
       </div>
     </script> 
 

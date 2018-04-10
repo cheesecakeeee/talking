@@ -16,6 +16,7 @@
     "express-session": "^1.15.6",
     "formidable": "^1.2.1",
     "gm": "^1.23.1",
-    "mongodb": "^2.2.35"
+    "mongodb": "^2.2.35",
+    "silly-datetime": "^0.1.2"
   }
 }

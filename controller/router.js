@@ -4,7 +4,7 @@ var md5 = require("../models/md5.js");
 var path = require("path");
 var fs = require("fs");
 var gm = require("gm");
-
+var sd = require('silly-datetime'); //时区时间格式
 
 // 首页
 exports.showIndex = function(req,res,next){
@@ -231,10 +231,12 @@ exports.doPost = function(req,res,next){
     form.parse(req, function(err, fields, files) {
         //获取提交的内容
         var content = fields.content;
+        // 获取对应时区时间
+        var time=sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
         //插入数据库
         db1.insertOne("post",{
             "username":username,
-            "time":new Date(),
+            "time":time,
             "content":content
         },function(err,result){
             if(err){
@@ -276,5 +278,38 @@ exports.getUserInfo = function(req,res,next){
 exports.getShuoshuoAmount = function(req,res,next){
     db1.getAllCount("post", function (count) {
         res.send(count.toString())
+    })
+}
+
+
+// 用户个人主页
+exports.showUser = function(req,res,next){
+    var user = req.params.user;
+    // 查找此人的说说
+    db1.find("post",{"username":user},function(err,result){
+        db1.find("user",{"username":user},function(err,result2){
+            res.render("user",{
+                "login":req.session.login == "1"?true:false,
+                "username":req.session.login == "1"?req.session.username:"",
+                "user": user,
+                "active":"我的说说",
+                "myshuoshuo":result,
+                "myavatar":result2[0].avatar
+            })
+        })
+        
+    })
+    
+}
+
+// 显示用户列表
+exports.showUserList = function(req,res,next){
+    db1.find("user",{},function(err,result){
+        res.render("userlist",{
+            "login":req.session.login == "1" ? true : false,
+            "username":req.session.login == "1" ? req.session.username : "",
+            "active":"成员列表",
+            "allmember":result
+        })
     })
 }
